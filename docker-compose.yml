@@ -1,0 +1,21 @@
+services:
+  data:
+    build: data
+    volumes:
+      - music-e-comm-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: musicecomm
+  backend:
+    build: backend
+    volumes:
+     - ./backend/src:/src
+  frontend:
+    build: frontend/app
+    ports:
+      - 3001:3001
+    volumes:
+      - ./frontend/app/src:/src
+      - ./frontend/app/public:/public
+volumes:
+  music-e-comm-data:
