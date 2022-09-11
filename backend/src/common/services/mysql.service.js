@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 
-var connection = mysql.createConnection({
+var pool = mysql.createPool({
+    connectionLimit:4,
     host: "data",
     user: "dev",
     password: "s5cr5t",
@@ -8,16 +9,17 @@ var connection = mysql.createConnection({
 });
 
 function connect() {
-    connection.connect(err => {
+    pool.getConnection((err,connection) => {
         if (err) {
             console.log(err);
             setTimeout(connect, 5000);
         } else {
             console.log("Connected");
+            connection.release();
         }
     });
 }
 
 connect();
 
-exports.mysql = mysql;
+exports.pool = pool;

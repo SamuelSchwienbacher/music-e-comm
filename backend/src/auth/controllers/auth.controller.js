@@ -1,46 +1,25 @@
 const secret = require('../../common/config/env.config.js').jwt_secret
+const refresh_secret = require('../../common/config/env.config.js').jwt_refresh_secret
+const expiration = require('../../common/config/env.config.js').jwt_expiration
+const refresh_expiration = require('../../common/config/env.config.js').jwt_refresh_expiration
 const jwt = require('jsonwebtoken');
-const UsersModel = require('../../users/models/users.model')
 
-//TODO split login into jwt and put the rest in middleware
 exports.login = async (req, res) => {
-    const body = req.body;
-    //NOT IMPLEMENTED
-    const user = UsersModel.getByEmail(body.email);
-    if (user) {
-        const refresh = req.body.email + secret;
-        let salt;
-        await bcrypt.genSalt(10, function(err, salt) {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ error: err });
-            } else {
-                salt = salt;
-            }
-        });
-        let hash;
-        await bcrypt.hash(refresh, salt, function(err, hash) {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ error: err });
-            } else {
-                hash = hash;
-            }
-        });
-        req.body.refreshKey = salt;
-        const token = jwt.sign(req.body, jwtSecret);
-        let refresh_token = hash;
+    try {
+        let token = jwt.sign({email:user.email},secret,{ expiresIn: expiration});
+        let refresh_token = jwt.sign({email:user.email},refresh_secret,{ expiresIn: refresh_expiration});
+        res.cookie('token',token,{ maxAge: 2 * 60 * 60 * 1000, httpOnly: true });
         res.status(201).send({accessToken: token, refreshToken: refresh_token});
-      } else {
-        res.status(400).json({ error: "Invalid Password" });
-      }
+    } catch (err) {
+        res.status(500).send({errors: err});
+    }
 };
 
 exports.refresh_token = (req, res) => {
     try {
         req.body = req.jwt;
-        let token = jwt.sign(req.body, jwtSecret);
-        res.status(201).send({id: token});
+        let token = jwt.sign(req.body, secret);
+        res.status(201).send({accessToken: token});
     } catch (err) {
         res.status(500).send({errors: err});
     }

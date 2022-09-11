@@ -1,27 +1,29 @@
 const ArticlesController = require('./controllers/articles.controller');
+const ValidationMiddleware = require('../common/middlewares/auth.validation.middleware');
 
-//TODO: fill routes with controller calls
 exports.routesConfig = function (app) {
     app.post('/articles', [
-
+        ValidationMiddleware.validAccess,
+        ArticlesController.createArticle
     ]);
     app.get('/articles', [
-        
+        ValidationMiddleware.validAccess,
+        ArticlesController.getArticles
     ]);
-    //Added single get for completeness
-    app.get('/articles/:article_id', [
-        
+    app.get('/articles/:id', [
+        ValidationMiddleware.validAccess,
+        ArticlesController.getArticleById
     ]);
-    app.get('/articles/:user_id', [
-        
+    app.get('/articles/:email', [
+        ValidationMiddleware.validAccess,
+        ArticlesController.getArticlesByUser
     ]);
-    app.get('/articles/:article_id/download', [
-        
+    app.patch('/articles/:id', [
+        ValidationMiddleware.validAccess,
+        ArticlesController.editArticle
     ]);
-    app.patch('/articles/:article_id', [
-        
-    ]);
-    app.delete('/articles/:article_id', [
-        
+    app.delete('/articles/:id', [
+        ValidationMiddleware.validAccess,
+        ArticlesController.deleteArticle
     ]);
 };
