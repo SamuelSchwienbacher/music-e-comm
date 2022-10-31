@@ -1,29 +1,40 @@
-const pool = require('../../common/services/mysql.service');
+const pool = require('../../common/services/mysql.service').pool;
+
 
 exports.createUser = (user) => {
-    pool.query(`INSERT INTO users (username, password) VALUES (${user.email}, ${user.password});`, (err, data) => {
-        if (err)
-            throw err;
-        return data;
+    return new Promise((resolve, reject) => {
+        pool.query(`INSERT INTO users (username, password) VALUES (?, ?);`, [user.email, user.password], (err, result) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(result);
+        });
     });
 };
 
-exports.addArticles = async (articles, email) => {
-    let data;
-    for (const a in articles) {
-        await pool.query(`INSERT INTO library (username, article_id) VALUES (${email}, ${a})`, (err, data) => {
-            if (err)
-                throw err;
-            data = data;
-        });
+exports.addArticles = (articles, email) => {
+    console.log(articles[0]);
+    console.log(email);
+    let promises = [];
+    for (const a of articles) {
+        console.log(a);
+        promises.push(new Promise((resolve, reject) => {
+            pool.query(`INSERT INTO library (username, article_id) VALUES (?, ?)`, [email, a], (err, result) => {
+                if (err)
+                    reject(err);
+                resolve(result);
+            });
+        }));
     }
-    return data;
+    return Promise.all(promises);
 }
 
 exports.get = (email) => {
-    pool.query(`SELECT * FROM users WHERE username=${email};`, (err, data) => {
-        if (err)
-            throw err;
-        return data;
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT * FROM users WHERE username=?;`, [email], (err, data) => {
+            if (err)
+                reject(err);
+            resolve(data);
+        });
     });
 }

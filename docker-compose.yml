@@ -11,11 +11,11 @@ services:
     volumes:
      - ./backend/src:/src
   frontend:
-    build: frontend/app
+    build: frontend
     ports:
       - 3001:3001
     volumes:
-      - ./frontend/app/src:/src
-      - ./frontend/app/public:/public
+      - ./frontend/src:/src
+      - ./frontend/public:/public
 volumes:
   music-e-comm-data:

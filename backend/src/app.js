@@ -4,6 +4,7 @@ const app = express();
 const AuthRouter = require('./auth/routes.config');
 const UsersRouter = require('./users/routes.config');
 const ArticlesRouter = require('./articles/routes.config');
+const config = require('./common/config/env.config');
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -18,6 +19,7 @@ app.use(function (req, res, next) {
     }
 });
 
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 AuthRouter.routesConfig(app);
 UsersRouter.routesConfig(app);

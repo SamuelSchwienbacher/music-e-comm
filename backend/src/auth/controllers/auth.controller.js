@@ -6,21 +6,25 @@ const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
     try {
-        let token = jwt.sign({email:user.email},secret,{ expiresIn: expiration});
-        let refresh_token = jwt.sign({email:user.email},refresh_secret,{ expiresIn: refresh_expiration});
-        res.cookie('token',token,{ maxAge: 2 * 60 * 60 * 1000, httpOnly: true });
-        res.status(201).send({accessToken: token, refreshToken: refresh_token});
+        const access_token = jwt.sign({email:req.body.email},secret,{ expiresIn: expiration});
+        const refresh_token = jwt.sign({email:req.body.email},refresh_secret,{ expiresIn: refresh_expiration});
+        console.log(access_token);
+        console.log(refresh_token);
+        res.cookie('jwt',refresh_token,{ maxAge: 2 * 60 * 60 * 1000, httpOnly: true, secure: true });
+        res.status(201).send({access_token: access_token});
     } catch (err) {
-        res.status(500).send({errors: err});
+        console.log(err);
+        res.status(500).send(err); 
     }
 };
 
 exports.refresh_token = (req, res) => {
     try {
-        req.body = req.jwt;
-        let token = jwt.sign(req.body, secret);
-        res.status(201).send({accessToken: token});
+        console.log(req.body);
+        const access_token = jwt.sign(req.body, secret);
+        res.status(201).send({access_token: access_token});
     } catch (err) {
+        console.log(err);
         res.status(500).send({errors: err});
     }
 };

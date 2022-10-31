@@ -14,7 +14,7 @@ exports.routesConfig = function (app) {
         ValidationMiddleware.validAccess,
         ArticlesController.getArticleById
     ]);
-    app.get('/articles/:email', [
+    app.get('/articles/user/:email', [
         ValidationMiddleware.validAccess,
         ArticlesController.getArticlesByUser
     ]);

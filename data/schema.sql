@@ -53,8 +53,8 @@ DROP TABLE IF EXISTS `library`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `library` (
-  `username` varchar(255) DEFAULT NULL,
-  `article_id` smallint unsigned DEFAULT NULL,
+  `username` varchar(255) NOT NULL,
+  `article_id` smallint unsigned NOT NULL,
   UNIQUE KEY `article_id` (`article_id`),
   KEY `username` (`username`),
   CONSTRAINT `library_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`),
@@ -81,7 +81,6 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`username`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

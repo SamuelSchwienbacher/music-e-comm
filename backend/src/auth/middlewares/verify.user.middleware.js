@@ -13,11 +13,13 @@ exports.hasAuthValidFields = (req, res, next) => {
         }
 
         if (errors.length) {
+            console.log(req.body)
             return res.status(400).send({errors: errors.join(',')});
         } else {
             return next();
         }
     } else {
+        console.log('missing body')
         return res.status(400).send({errors: 'Missing email and password fields'});
     }
 };
@@ -25,9 +27,11 @@ exports.hasAuthValidFields = (req, res, next) => {
 exports.isPasswordAndUserMatch = (req, res, next) => {
     try {
         UserModel.get(req.body.email).then(user => {
+            user = user[0];
             bcrypt.compare(req.body.password, user.password, function(err, result) {
                 if (err) {
-                    throw err;
+                    console.log(err);
+                    res.status(500).send(err);
                 }
                 if (result) {
                     req.body = {
@@ -38,8 +42,12 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
                     return res.status(400).send({errors: ['Invalid e-mail or password']});
                 }
             });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).send(err);
         });
     } catch (err) {
+        console.log(err);
         res.status(500).send({errors: err});
     }
 };
