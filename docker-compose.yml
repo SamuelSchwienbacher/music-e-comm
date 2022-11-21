@@ -8,6 +8,8 @@ services:
       MYSQL_DATABASE: musicecomm
   backend:
     build: backend
+    ports:
+      - 3000:3000
     volumes:
      - ./backend/src:/src
   frontend:
